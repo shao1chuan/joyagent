@@ -1,5 +1,6 @@
 package com.jd.genie.controller;
 
+import com.jd.genie.agent.agent.AgentContext;
 import com.jd.genie.agent.tool.mcp.McpTool;
 import com.jd.genie.agent.util.SpringContextHolder;
 import com.jd.genie.config.GenieConfig;
@@ -22,8 +23,15 @@ public class GenieTest {
         if (genieConfig.getMcpServerUrlArr().length > 0) {
             String mcpServerUrl = genieConfig.getMcpServerUrlArr()[0];
 
+            // Create AgentContext for the test
+            AgentContext agentContext = AgentContext.builder()
+                    .requestId("test-request-id")
+                    .sessionId("test-session-id")
+                    .build();
+
             // time mcp tool
             McpTool tool = new McpTool();
+            tool.setAgentContext(agentContext);
             String listResult = tool.listTool(mcpServerUrl);
             log.info("list tool result {}", listResult);
 

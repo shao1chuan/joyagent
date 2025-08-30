@@ -1,4 +1,5 @@
 import os
+import re
 from typing import List
 
 from fastapi import UploadFile
@@ -15,21 +16,36 @@ class _FileDB(object):
         if not os.path.exists(self._work_dir):
             os.makedirs(self._work_dir)
 
+    def _sanitize_path(self, path_component: str) -> str:
+        """Sanitize path component to be compatible with Windows and Linux filesystems"""
+        if not path_component:
+            return "default"
+        # Replace invalid characters with underscores
+        # Windows invalid chars: < > : " | ? * and control characters (0-31)
+        # Also replace / and \ to avoid path confusion
+        sanitized = re.sub(r'[<>:"|?*\\/\x00-\x1f]', '_', path_component)
+        # Ensure the name is not empty and doesn't end with space or dot (Windows restriction)
+        sanitized = sanitized.strip(' .')
+        return sanitized if sanitized else "default"
+
     async def save(self, file_name, content, scope) -> str:
         if "." in file_name:
             file_name = os.path.basename(file_name)
         else:
             file_name = f"{file_name}.txt"
 
-        save_path = os.path.join(self._work_dir, scope)
+        # Sanitize scope to make it filesystem-safe
+        sanitized_scope = self._sanitize_path(scope)
+        save_path = os.path.join(self._work_dir, sanitized_scope)
         if not os.path.exists(save_path):
             os.makedirs(save_path)
-        with open(f"{save_path}/{file_name}", "w") as f:
+        file_path = os.path.join(save_path, file_name)
+        with open(file_path, "w", encoding="utf-8") as f:
             f.write(content)
-        return f"{save_path}/{file_name}"
+        return file_path
     
     async def save_by_data(self, file: UploadFile) -> str:
-        file_name = file.filename
+        file_name = self._sanitize_path(file.filename)
         file_data = file.file.read()
         save_path = os.path.join(self._work_dir, file_name)
         with open(save_path, "wb") as f:
