@@ -383,6 +383,6 @@ sh start_genie.sh
 [![Star History Chart](https://api.star-history.com/svg?repos=jd-opensource/joyagent-jdgenie&type=Date&cache=false)](https://star-history.com/#jd-opensource/joyagent-jdgenie&Date)
 
 欢迎沟通和联系我们  
-![contact](./docs/img/wechat2.png)
+<img width="396" height="396" alt="image" src="https://github.com/user-attachments/assets/275e8ca5-da74-4bf1-84e5-f5712aea0b94" />
 
 [//]: # (![contact]&#40;./docs/img/contact.jpg&#41;)
