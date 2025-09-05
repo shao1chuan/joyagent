@@ -1,0 +1,4 @@
+1 我要把数据库autobots.db  换成 mysql，同时保留autobots.db ,mysql的本地 docker配置文件如下：  [Pasted text #1 +32
+  lines。  具体来说要在 E:\IdeaProjects\jj\joyagent-jdgenie\genie-tool\.env
+  文件上做扩展，通过配置文件来选择用哪个数据库 ；在E:\IdeaProjects\jj\joyagent-jdgenie\genie-tool\genie_tool\db
+  文件夹下加一个db_mysql.py文件。

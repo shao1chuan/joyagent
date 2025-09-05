@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(/E:\\IdeaProjects\\jj\\joyagent-jdgenie\\genie-tool/**)",
+      "Read(/E:\\IdeaProjects\\jj\\joyagent-jdgenie\\genie-tool\\genie_tool\\db/**)",
+      "Read(/E:\\IdeaProjects\\jj\\joyagent-jdgenie\\genie-tool\\genie_tool\\db/**)",
+      "Read(/E:\\IdeaProjects\\jj\\joyagent-jdgenie\\genie-tool\\genie_tool\\db/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
