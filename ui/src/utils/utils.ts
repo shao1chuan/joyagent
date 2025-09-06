@@ -140,6 +140,13 @@ export const getSessionId = () => {
 };
 
 /**
+ * 从当前页面 URL 中获取 username 参数
+ */
+export const getUsernameFromUrl = (): string | null => {
+  return new URLSearchParams(window.location.search).get('username');
+};
+
+/**
  * 设置全局消息实例，以便在应用中统一管理消息提示
  */
 let message: MessageInstance | null = null;

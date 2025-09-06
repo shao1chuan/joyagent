@@ -81,6 +81,7 @@ public class DeepSearchTool implements BaseTool {
             DeepSearchRequest request = DeepSearchRequest.builder()
                     .request_id(agentContext.getRequestId() + ":" + StringUtil.generateRandomString(5))
                     .query(query)
+                    .erp(agentContext.getUsername())
                     .agent_id("1")
                     .scene_type("auto_agent")
                     .src_configs(srcConfig)

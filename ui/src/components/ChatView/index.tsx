@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useMemo } from "react";
-import { getUniqId, scrollToTop, ActionViewItemEnum, getSessionId } from "@/utils";
+import { getUniqId, scrollToTop, ActionViewItemEnum, getSessionId, getUsernameFromUrl } from "@/utils";
 import querySSE from "@/utils/querySSE";
 import {  handleTaskData, combineData } from "@/utils/chat";
 import Dialogue from "@/components/Dialogue";
@@ -62,13 +62,17 @@ const ChatView: GenieType.FC<Props> = (props) => {
       setChatTitle(message!);
     }
     setLoading(true);
+    const username = getUsernameFromUrl();
+    console.log('前端获取的username:', username);
     const params = {
       sessionId: sessionId,
       requestId: requestId,
       query: message,
       deepThink: deepThink ? 1 : 0,
-      outputStyle
+      outputStyle,
+      user: username
     };
+    console.log('前端发送的请求参数:', params);
     const handleMessage = (data: MESSAGE.Answer) => {
       const { finished, resultMap, packageType, status } = data;
       if (status === "tokenUseUp") {

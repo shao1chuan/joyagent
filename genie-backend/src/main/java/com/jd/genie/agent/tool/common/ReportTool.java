@@ -95,6 +95,7 @@ public class ReportTool implements BaseTool {
                     .contentStream(agentContext.getIsStream())
                     .streamMode(streamMode)
                     .fileType(fileType)
+                    .username(agentContext.getUsername())
                     .build();
             // 调用流式 API
             Future future = callCodeAgentStream(request);

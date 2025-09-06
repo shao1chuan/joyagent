@@ -33,4 +33,5 @@ public class AgentContext {
     String basePrompt;
     Integer agentType;
     List<File> taskProductFiles;
+    String username;
 }

@@ -24,6 +24,7 @@ public class CodeInterpreterRequest {
     private Boolean stream;
     private Boolean contentStream;
     private Map<String, Object> streamMode;
+    private String username;
 
     @Data
     @AllArgsConstructor

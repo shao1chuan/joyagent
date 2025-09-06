@@ -73,7 +73,10 @@ public class CodeInterpreterTool implements BaseTool {
                     .task(task)
                     .fileNames(fileNames)
                     .stream(true)
+                    .username(agentContext.getUsername())
                     .build();
+            
+            log.info("{} CodeInterpreter工具调用，username: {}", agentContext.getRequestId(), agentContext.getUsername());
 
             // 调用流式 API
             Future future = callCodeAgentStream(request);

@@ -89,6 +89,7 @@ async def upload_file(
     file_name: str,
     file_type: str,
     request_id: str,
+    username: str = None,
 ):
     if file_type == "markdown":
         file_type = "md"
@@ -100,6 +101,10 @@ async def upload_file(
         "content": content,
         "description": content[:200],
     }
+    # 添加 username 到请求体中（如果提供）
+    if username:
+        body["username"] = username
+    
     async with aiohttp.ClientSession() as session:
         async with session.post(
             f"{os.getenv('FILE_SERVER_URL')}/upload_file", json=body, timeout=10

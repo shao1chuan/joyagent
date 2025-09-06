@@ -32,6 +32,7 @@ class CIRequest(BaseModel):
     stream: bool = True
     stream_mode: Optional[StreamMode] = Field(default=StreamMode(), alias="streamMode", description="流式模式")
     origin_file_names: Optional[List[dict]] = Field(default=None, alias="originFileNames", description="原始文本信息")
+    username: Optional[str] = Field(default=None, description="用户名")
 
 
 class ReportRequest(CIRequest):
@@ -61,6 +62,7 @@ class FileListRequest(BaseModel):
 class FileUploadRequest(FileRequest):
     description: str = Field(description="返回的生成的文件描述")
     content: str = Field(description="返回的生成的文件内容")
+    username: Optional[str] = Field(default=None, description="用户名")
 
 
 class DeepSearchRequest(BaseModel):
@@ -73,3 +75,10 @@ class DeepSearchRequest(BaseModel):
 
     stream: bool = Field(default=True, description="是否流式响应")
     stream_mode: Optional[StreamMode] = Field(default=StreamMode(), alias="streamMode", description="流式模式")
+    username: Optional[str] = Field(default=None, description="用户名")
+    erp: Optional[str] = Field(default=None, description="用户ERP，与username等价")
+    
+    @property
+    def effective_username(self) -> Optional[str]:
+        """获取有效的用户名，优先使用username，其次使用erp"""
+        return self.username or self.erp

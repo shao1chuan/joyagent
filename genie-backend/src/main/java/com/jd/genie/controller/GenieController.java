@@ -137,6 +137,7 @@ public class GenieController {
                         .basePrompt(request.getBasePrompt())
                         .agentType(request.getAgentType())
                         .isStream(Objects.nonNull(request.getIsStream()) ? request.getIsStream() : false)
+                        .username(request.getErp())
                         .build();
 
                 // 构建工具列表
