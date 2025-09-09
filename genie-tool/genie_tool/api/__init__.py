@@ -15,3 +15,10 @@ api_router = APIRouter(prefix="/v1")
 api_router.include_router(tool_router, prefix="/tool", tags=["tool"])
 api_router.include_router(file_router, prefix="/file_tool", tags=["file_manage"])
 
+# 健康检查端点
+@api_router.get("/health")
+@api_router.get("/health/")  
+async def health_check():
+    """健康检查端点"""
+    return {"status": "healthy", "service": "genie-tool"}
+
