@@ -37,16 +37,21 @@ async def upload_file(
         filename=body.file_name, content=body.content, file_id=body.file_id, description=body.description,
         request_id=body.request_id)
     
-    # 如果提供了username，插入file_user_request记录
+    # 如果提供了username，检查并插入file_user_request记录（每个request_id只插入一次）
     print(f"文件上传：filename={body.file_name}, username={body.username}, request_id={body.request_id}")
     if body.username:
-        print(f"开始插入file_user_request记录，username={body.username}")
         try:
-            result = await FileUserRequestOp.create_user_request(
-                username=body.username,
-                request_id=body.request_id
-            )
-            print(f"成功插入file_user_request记录，id={result.id}")
+            # 检查是否已存在该request_id的记录
+            existing_record = await FileUserRequestOp.get_by_request_id(body.request_id)
+            if existing_record:
+                print(f"request_id={body.request_id} 已存在file_user_request记录，跳过创建")
+            else:
+                print(f"开始插入file_user_request记录，username={body.username}")
+                result = await FileUserRequestOp.create_user_request(
+                    username=body.username,
+                    request_id=body.request_id
+                )
+                print(f"成功插入file_user_request记录，id={result.id}")
         except Exception as e:
             # 记录错误但不阻断文件上传流程
             print(f"插入file_user_request记录失败: {e}")

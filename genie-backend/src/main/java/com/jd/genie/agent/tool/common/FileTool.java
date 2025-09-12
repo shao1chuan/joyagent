@@ -109,6 +109,8 @@ public class FileTool implements BaseTool {
 
         // 构建请求体 多轮对话替换requestId为sessionId
         fileRequest.setRequestId(agentContext.getSessionId());
+        // 设置用户名以便Python服务创建file_user_request记录
+        fileRequest.setUsername(agentContext.getUsername());
         // 清理文件名中的特殊字符
         fileRequest.setFileName(StringUtil.removeSpecialChars(fileRequest.getFileName()));
         if (fileRequest.getFileName().isEmpty()) {
@@ -196,6 +198,8 @@ public class FileTool implements BaseTool {
                 .build();
         // 适配多轮对话
         getFileRequest.setRequestId(agentContext.getSessionId());
+        // 设置用户名以便Python服务关联用户
+        getFileRequest.setUsername(agentContext.getUsername());
         RequestBody body = RequestBody.create(JSON.toJSONString(getFileRequest), mediaType);
         Request request = new Request.Builder()
                 .url(url)
