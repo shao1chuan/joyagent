@@ -99,7 +99,7 @@ autobots:
     tool_list: '{}'
     code_interpreter_url: "http://genie-tool:1601"
     deep_search_url: "http://genie-tool:1601"
-    mcp_client_url: "http://127.0.0.1:8188"
+    mcp_client_url: "http://  .0.0.1:8188"
     mcp_server_url: "https://mcp.api-inference.modelscope.net/1784ac5c6d0044/sse"
     summary:
       system_prompt: "# 角色
