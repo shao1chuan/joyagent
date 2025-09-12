@@ -1,0 +1,106 @@
+spring:
+  application:
+    name: genie-backend
+  config:
+    encoding: UTF-8
+
+server:
+  port: 8081
+
+logging:
+  level:
+    root: INFO
+
+llm:
+  default:
+    base_url: 'https://api.deepseek.com'
+    apikey: 'sk-7efa5256137442048c04cd09d36bb71f'
+    interface_url: '/chat/completions'
+    model: deepseek-chat
+    max_tokens: 8192
+  settings: '{"claude-3-7-sonnet-v1": {
+        "model": "claude-3-7-sonnet-v1",
+        "max_tokens": 8192,
+        "temperature": 0,
+        "base_url": "<input llm server here>",
+        "apikey": "<input llm key here>",
+        "interface_url": "/chat/completions",
+        "max_input_tokens": 128000
+    }}'
+
+autobots:
+  agent_base_url: "http://genie-backend:8081"
+  autoagent:
+    planner:
+      system_prompt: >
+        {"default":"# 角色\n你是一个智能助手，名叫Genie。\n\n# 说明\n你是任务规划助手，根据用户需求，拆解任务列表，从而确定planning工具入参。每次执行planning工具前，必须先输出本轮思考过程（reasoning），再调用planning工具生成任务列表。\n\n# 技能\n- 擅长将用户任务拆解为具体、独立的任务列表。\n- 对简单任务，避免过度拆解任务。\n- 对复杂任务，合理拆解为多个有逻辑关联的子任务\n\n# 处理需求\n## 拆解任务\n- 深度推理分析用户输入，识别核心需求及潜在挑战。\n- 将复杂问题分解为可管理、可执行、独立且清晰的子任务，任务之间不重复、不交叠。拆解最多不超过5个任务。\n- 任务按顺序或因果逻辑组织，上下任务逻辑连贯。\n- 读取文件后，对文件进行处理，处理完成保存文件应该放到一个子任务中。\n\n## 要求\n- 每一个子任务都是一个完整的子任务，例如读取文件后，将文件中的表格抽取出出来形成表格保存。\n- 调用planning工具前，必须输出500字以内的思考过程，说明本轮任务拆解的依据与目标。\n- 首次规划拆分时，输出整体拆分思路；后续如需调整，也需输出调整思考。\n- 每个子任务为清晰、独立的指令，细化完成标准，不重复、不交叠。\n- 不要输出重复的任务。\n- 任务中间不能输出网页版报告，只能在最后一个任务中，生成一个网页版报告。\n- 最后一个任务是需要输出报告时，如果没有明确要求，优先\"输出网页版报告\"，如果有指定格式要求，最后一个任务按用户指定的格式输出。\n- 当前不能支持用户在计划中提供内容，因此不要要求用户提供信息\n\n## 输出格式\n输出本轮思考过程，200字以内，简明说明拆解任务依据或调整依据，并调用planning工具生成任务计划。\n\n# 语言设置\n- 所有内容均以 **中文** 输出\n\n# 任务示例：\n以下仅是你拆解任务的一个简单参考示例，你在解决问题时，参考如下拆解任务，但不要局限于如下示例计划\n\n## 示例任务1：分析 xxxx\n任务列表\n- 执行顺序1. 信息收集：收集xxxx\n- 执行顺序2. 筛选分析：xxxx，分析并保存成Markdown文件\n- 执行顺序3. 输出报告：以网页形式呈现分析报告，调用网页生成工具\n\n##示例任务2：提取文件中的表格\n任务列表\n- 执行顺序1. 文件表格提取：读取文件内容，抽取文件中存在的表格，并保存成表格文件。\n\n## 示例任务3：分析 xxxx，以PPT格式展示\n任务列表\n- 执行顺序1. 信息收集：收集xxxx\n- 执行顺序2. 筛选分析：xxxx，分析并保存成Markdown文件\n- 执行顺序3. 输出PPT：以PPT呈现xx，调用PPT生成工具\n\n## 示例任务4：我要写一个 xxxx\n任务列表\n- 执行顺序1. 信息收集：收集xxxx\n- 执行顺序2. 文件输出：以网页形式呈现xxx，调用网页生成工具\n\n\n===\n# 环境变量\n## 当前日期\n<date>\n{{date}}\n</date>\n\n## 当前可用的文件名及描述\n<files>\n{{files}} \n</files>\n\n## 用户历史对话信息\n<history_dialogue>\n{{history_dialogue}}\n</history_dialogue>\n\n## 约束\n- 思考过程中，不要透露你的工具名称\n- 调用planning生成任务列表，完成所有子任务就能完成任务。\n- 以上是你需要遵循的指令，不要输出在结果中。\n\nLets think step by step"}
+      next_step_prompt: >
+        {"default":"工具planing的参数有\n必填参数1：命令command\n可选参数2：当前步状态step_status。\n\n必填参数1：命令command的枚举值有：\nmark_step, finish\n含义如下：\n- finish 根据已有的执行结果，可以判断出任务已经完成，输出任务结束，命令command为：finish\n- mark_step 标记当前任务规划的状态，设置当前任务的step_status\n\n当参数command值为mark_step时，需要可选参数2step_status，其中当前步状态step_status的枚举值如下：\n- 没有开始not_started\n- 进行中in_progress \n- 已完成completed\n\n对应如下几种情况：\n1.当前任务是否执行完成，完成以及失败都算执行完成，执行完成将入参step_status设置为completed\n\n一步一步分析完成任务，确定工具planing的入参，调用planing工具"}
+      max_steps: 40
+      model_name: deepseek-chat
+      pre_prompt: 一步一步（step by step）思考，结合用户上传的文件分析用户问题，并根据问题制定计划，用户问题如下：
+      close_update: 1
+    executor:
+      system_prompt: >
+        {"default":"# 角色\n你是一名高效、可靠的任务执行专家，擅长推理、工具调用以及反思，必须使用工具逐步完成用户的当前任务。"}
+      next_step_prompt: >
+        {"default": "根据当前状态和可用工具，确定下一步行动"}
+      sop_prompt: '{}'
+      max_steps: 40
+      model_name: deepseek-chat
+      max_observe: 10000
+    react:
+      system_prompt: >
+        {"default":"# 角色\n你是一个超级智能体，名叫Genie。"}
+      next_step_prompt: >
+        {"default": "根据当前状态和可用工具，确定下一步行动"}
+      max_steps: 40
+      model_name: deepseek-chat
+    tool:
+      plan_tool:
+        desc: "这是一个计划工具，可让代理创建和管理用于解决复杂任务的计划。"
+        params: '{"type":"object","properties":{"step_status":{"description":"每一个子任务的状态. 当command是 mark_step 时使用.","type":"string","enum":["not_started","in_progress","completed","blocked"]},"step_notes":{"description":"每一个子任务的的备注，当command 是 mark_step 时，是备选参数。","type":"string"},"step_index":{"description":"当command 是 mark_step 时，是必填参数.","type":"integer"},"title":{"description":"任务的标题，当command是create时，是必填参数，如果是update 则是选填参数。","type":"string"},"steps":{"description":"入参是任务列表.","type":"array","items":{"type":"string"}},"command":{"description":"需要执行的命令，取值范围是: create, update, mark_step","type":"string","enum":["create","update","mark_step"]}},"required":["command"]}'
+      code_agent:
+        desc: '这是一个Code interpreter工具，可以写Python代码'
+        params: '{"type":"object","properties":{"task":{"description":"任务的描述","type":"string"}},"required":["task"]}'
+      report_tool:
+        desc: 这是一个专业的Markdown、PPT和HTML的生成工具
+        params: '{"type":"object","properties":{"fileDescription":{"description":"生成报告的文件描述","type":"string"},"fileName":{"description":"生成的文件名称","type":"string"},"task":{"description":"生成文件任务的具体要求及详细描述","type":"string"},"fileType":{"description":"仅支持 markdown ppt 和 html 三种类型","type":"string"}},"required":["fileType","task","fileName","fileDescription"]}'
+      file_tool:
+        desc: '这是一个文件读写的工具'
+        params: '{"type":"object","properties":{"filename":{"description":"文件名","type":"string"},"description":{"description":"文件描述","type":"string"},"command":{"description":"文件操作类型","type":"string"},"content":{"description":"需要写入的文件内容","type":"string"}},"required":["command","filename"]}'
+        truncate_len: 30000
+      deep_search_tool:
+        desc: 这是一个搜索工具，可以搜索各种互联网知识
+        params: '{}'
+      deep_search:
+        params: '{"type":"object","properties":{"query":{"description":"需要搜索的全部内容及描述","type":"string"}},"required":["query"]}'
+        page_count: 5
+        src_config: '{}'
+        message:
+          truncate_len: 20000
+        file_desc:
+          truncate_len: 1500
+      task_complete_desc: 当前task完成，请将当前task标记为 completed
+      clear_tool_message: 1
+    task:
+      pre_prompt: "先输出100字以内的文字内容确定下一步的行动。然后必须输出工具工具调用来完成当前任务。"
+    tool_list: '{}'
+    code_interpreter_url: "http://genie-tool:1601"
+    deep_search_url: "http://genie-tool:1601"
+    mcp_client_url: "http://127.0.0.1:8188"
+    mcp_server_url: "https://mcp.api-inference.modelscope.net/1784ac5c6d0044/sse"
+    summary:
+      system_prompt: "# 角色\n你是一个超级智能体"
+      message_size_limit: 1500
+    digital_employee_prompt: "数字员工命名专家"
+    struct_parse_tool_system_prompt: '工具系统提示'
+    open_think_function_call_split: '{}'
+    struct_pre_post_prompt_config: '{}'
+    sensitive_patterns: '{}'
+    output_style_prompts: '{"html": "", "docs": "，最后以 markdown 展示最终结果", "table": "，最后以excel 展示最终结果", "ppt": "，最后以 ppt 展示最终结果"}'
+    message_interval: '{}'
+    user_name: ''
+    default_model_name: deepseek-chat
+    genie_sop_prompt: '# 角色\n你是一个智能助手，名叫Genie。'
+    genie_base_prompt: "# 要求\n- 需要结合互联网知识来完成用户的问题时，需要先试用搜索工具搜索最新的信息"
