@@ -21,7 +21,7 @@ def get_mysql_config():
     port = os.environ.get("MYSQL_PORT", "13306")
     user = os.environ.get("MYSQL_USER", "root")
     password = os.environ.get("MYSQL_PASSWORD", "root")
-    database = os.environ.get("MYSQL_DATABASE", "genie_tool")
+    database = os.environ.get("MYSQL_DATABASE", "jeecg-boot")
     
     return {
         "host": host,
