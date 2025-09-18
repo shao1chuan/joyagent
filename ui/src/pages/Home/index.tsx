@@ -97,7 +97,7 @@ const Home: GenieType.FC<HomeProps> = memo(() => {
               </div>
             ))}
           </div>
-          <div className="mt-80 mb-120">
+          {/* <div className="mt-80 mb-120">
             <div className="text-center">
               <h2 className="text-2xl font-bold mb-2">优秀案例</h2>
               <p className="text-gray-500">和 Genie 一起提升工作效率</p>
@@ -107,7 +107,7 @@ const Home: GenieType.FC<HomeProps> = memo(() => {
                 <CaseCard key={i} {...demo} />
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
       );
     }

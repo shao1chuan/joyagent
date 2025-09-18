@@ -48,7 +48,7 @@ const ChatView: GenieType.FC<Props> = (props) => {
       thought: "",
       response: "",
       taskStatus: 0,
-      tip: "已接收到你的任务，将立即开始处理...",
+      tip: "已接收到你的问题，将立即开始处理...",
       multiAgent: {tasks: []},
     };
   };

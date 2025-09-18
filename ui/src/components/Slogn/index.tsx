@@ -1,24 +1,20 @@
-import Lottie from 'react-lottie';
-import { animationData } from './animation';
-
 const Slogn: GenieType.FC = () => {
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: animationData,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
-      className: 'lottie'
-    },
-  };
   return (
     <div className='mb-54'>
-      <Lottie options={defaultOptions}
-        height={68}
-        width={200}
-      />
+      <div
+        className="text-4xl font-bold text-transparent bg-clip-text"
+        style={{
+          backgroundImage: 'linear-gradient(270deg, rgba(130,45,255,1) 0%, rgba(62,69,255,1) 20.88%, rgba(60,196,250,1) 100%)',
+          height: '68px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '300px'
+        }}
+      >
+        深度研究
+      </div>
     </div>
-
   );
 };
 

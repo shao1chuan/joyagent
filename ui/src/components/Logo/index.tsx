@@ -11,7 +11,7 @@ const Logo: GenieType.FC<{
     <div
       className='ml-8 text-lg font-bold text-transparent bg-clip-text text-[16px]'
       style={{backgroundImage: 'linear-gradient(270deg, rgba(130,45,255,1) 0%,rgba(62,69,255,1) 20.88266611099243%,rgba(60,196,250,1) 100%)'}}
-    >Genie</div>
+    >学生</div>
     {!hideSplit && <div className='w-1 h-16 mx-8 bg-[#dbdbde]'></div>}
   </div>;
 };
