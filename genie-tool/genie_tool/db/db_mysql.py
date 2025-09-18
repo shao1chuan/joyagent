@@ -17,12 +17,27 @@ from sqlmodel import SQLModel
 
 def get_mysql_config():
     """获取MySQL配置"""
+    # 优先使用DATABASE_URL
+    database_url = os.environ.get("DATABASE_URL")
+    if database_url:
+        # 解析DATABASE_URL: mysql+pymysql://user:password@host:port/database?charset=utf8mb4
+        import urllib.parse
+        parsed = urllib.parse.urlparse(database_url)
+        return {
+            "host": parsed.hostname,
+            "port": str(parsed.port) if parsed.port else "3306",
+            "user": parsed.username,
+            "password": parsed.password,
+            "database": parsed.path.lstrip('/')
+        }
+
+    # 回退到单独的环境变量
     host = os.environ.get("MYSQL_HOST", "localhost")
     port = os.environ.get("MYSQL_PORT", "13306")
     user = os.environ.get("MYSQL_USER", "root")
     password = os.environ.get("MYSQL_PASSWORD", "root")
     database = os.environ.get("MYSQL_DATABASE", "jeecg-boot")
-    
+
     return {
         "host": host,
         "port": port,

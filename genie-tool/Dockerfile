@@ -43,17 +43,9 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
 RUN echo '#!/bin/bash\n\
 set -e\n\
 \n\
-# Wait for MySQL to be ready\n\
-echo "Waiting for MySQL to be ready..."\n\
-while ! nc -z $MYSQL_HOST $MYSQL_PORT; do\n\
-  echo "MySQL is not ready yet, waiting..."\n\
-  sleep 2\n\
-done\n\
-echo "MySQL is ready!"\n\
-\n\
+echo "Initializing database..."\n\
 # Initialize database if using MySQL\n\
 if [ "$DB_TYPE" = "mysql" ]; then\n\
-  echo "Initializing MySQL database..."\n\
   python -m genie_tool.db.db_engine || echo "Database initialization completed or already exists"\n\
 fi\n\
 \n\
