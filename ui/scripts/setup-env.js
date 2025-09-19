@@ -170,9 +170,9 @@ function main() {
   const inDocker = isRunningInDocker();
   
   if (inDocker) {
-    // Docker环境：使用空字符串(相对路径，通过nginx代理)
+    // Docker环境：使用相对路径，通过nginx代理
     console.log('[ENV-SETUP] Docker environment detected');
-    updateServiceBaseUrl('');
+    updateServiceBaseUrl('/joyagent/api');
   } else {
     // 非Docker环境：使用localhost:8081
     console.log('[ENV-SETUP] Local development environment detected');
