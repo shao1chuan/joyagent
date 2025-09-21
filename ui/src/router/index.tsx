@@ -42,6 +42,8 @@ const router = createBrowserRouter([
     path: '*',
     element: <Navigate to={ROUTES.NOT_FOUND} replace />,
   },
-]);
+], {
+  basename: '/joyagent'
+});
 
 export default router;

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(find:*)",
+      "Read(//e/IdeaProjects/jj/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

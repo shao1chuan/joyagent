@@ -57,6 +57,13 @@ def register_middleware(app: FastAPI):
 def register_router(app: FastAPI):
     from genie_tool.api import api_router
     app.include_router(api_router)
+    
+    # 添加根路径健康检查
+    @app.get("/health")
+    @app.get("/")  
+    async def root_health():
+        """根路径健康检查"""
+        return {"status": "healthy", "service": "genie-tool", "message": "Genie Tool is running"}
 
 
 app = create_app()

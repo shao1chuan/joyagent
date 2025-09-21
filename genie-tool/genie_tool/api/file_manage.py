@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse, Response, FileResponse
 from genie_tool.model.protocal import FileRequest, FileListRequest, FileUploadRequest, get_file_id
 from genie_tool.util.middleware_util import RequestHandlerRoute
 from genie_tool.db.file_table_op import FileInfoOp, get_file_preview_url, get_file_download_url
+from genie_tool.db.file_user_request_op import FileUserRequestOp
 
 
 router = APIRouter(route_class=RequestHandlerRoute)
@@ -35,6 +36,30 @@ async def upload_file(
     file_info = await FileInfoOp.add_by_content(
         filename=body.file_name, content=body.content, file_id=body.file_id, description=body.description,
         request_id=body.request_id)
+    
+    # 如果提供了username，检查并插入file_user_request记录（每个request_id只插入一次）
+    print(f"文件上传：filename={body.file_name}, username={body.username}, request_id={body.request_id}")
+    if body.username:
+        try:
+            # 检查是否已存在该request_id的记录
+            existing_record = await FileUserRequestOp.get_by_request_id(body.request_id)
+            if existing_record:
+                print(f"request_id={body.request_id} 已存在file_user_request记录，跳过创建")
+            else:
+                print(f"开始插入file_user_request记录，username={body.username}")
+                result = await FileUserRequestOp.create_user_request(
+                    username=body.username,
+                    request_id=body.request_id
+                )
+                print(f"成功插入file_user_request记录，id={result.id}")
+        except Exception as e:
+            # 记录错误但不阻断文件上传流程
+            print(f"插入file_user_request记录失败: {e}")
+            import traceback
+            traceback.print_exc()
+    else:
+        print("username为空，跳过插入file_user_request记录")
+    
     preview_url = get_file_preview_url(file_id=file_info.request_id, file_name=file_info.filename)
     download_url = get_file_download_url(file_id=file_info.request_id, file_name=file_info.filename)
     return JSONResponse(content={"ossUrl": download_url, "downloadUrl": download_url, "domainUrl": preview_url, "fileSize": file_info.file_size})

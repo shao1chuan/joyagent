@@ -1,0 +1,57 @@
+Shift+Tab
+
+# 当前项目
+claude config set permissions.defaultMode plan
+
+# 全局生效（所有项目）
+claude config set -g permissions.defaultMode plan
+
+ # 安装并启动 Phoenix
+  pip install arize-phoenix
+  python -m phoenix.server.main serve
+
+test.db 中有以下几个主要表：
+  1. tracing_generation 表
+  存储 LLM 对话记录：
+  - input: 输入的对话消息
+  - output: LLM 的回复内容
+  - model: 使用的模型名称
+  - model_configs: 模型配置参数
+  - usage: Token 使用统计
+  - trace_id/span_id: 用于关联会话
+
+  2. tracing_tool 表
+
+  存储 工具调用记录：
+  - name: 调用的工具名称
+  - input: 工具的输入参数
+  - output: 工具的执行结果
+  - mcp_data: MCP 协议相关数据
+  - trace_id/span_id: 用于关联会话
+
+  3. cache_tool 表
+
+  存储 工具缓存：
+  - function: 函数名称
+  - args/kwargs: 函数参数
+  - result: 缓存的执行结果
+  - cache_key: 缓存键
+  - timestamp: 缓存时间
+  - execution_time: 执行耗时
+
+  4. data 表
+
+  存储 数据集样本：
+  - question/answer: 问题和答案
+  - dataset: 数据集名称
+  - topic/level: 主题和难度级别
+
+  5. evaluation_data 表
+
+  存储 评估结果：
+  - raw_question/response: 问题和回答
+  - correct/confidence: 正确性判断和置信度
+  - time_cost: 耗时统计
+  - trajectory: 执行轨迹
+
+  所以你的对话历史主要在 tracing_generation 和 tracing_tool 这两个表中。

@@ -27,6 +27,7 @@ router = APIRouter(route_class=RequestHandlerRoute)
 async def post_code_interpreter(
     body: CIRequest,
 ):
+    print(f"Python接收到CodeInterpreter请求，username: {body.username}, request_id: {body.request_id}")
      # 处理文件路径
     if body.file_names:
         for idx, f_name in enumerate(body.file_names):
@@ -141,6 +142,7 @@ async def post_code_interpreter(
                 file_name=body.file_name,
                 request_id=body.request_id,
                 file_type="html" if body.file_type == "ppt" else body.file_type,
+                username=body.username,
             )
         ]
         return {
@@ -155,6 +157,7 @@ async def post_code_interpreter(
 async def post_report(
     body: ReportRequest,
 ):
+    print(f"Python接收到Report请求，username: {body.username}, request_id: {body.request_id}")
     # 处理文件路径
     if body.file_names:
         for idx, f_name in enumerate(body.file_names):
@@ -225,7 +228,7 @@ async def post_report(
         if body.file_type in ["ppt", "html"]:
             content = _parser_html_content(content)
         file_info = [await upload_file(content=content, file_name=body.file_name, request_id=body.request_id,
-                                 file_type="html" if body.file_type == "ppt" else body.file_type)]
+                                 file_type="html" if body.file_type == "ppt" else body.file_type, username=body.username)]
         yield ServerSentEvent(data=json.dumps(
             {"requestId": body.request_id, "data": content, "fileInfo": file_info,
              "isFinal": True}, ensure_ascii=False))
@@ -248,7 +251,7 @@ async def post_report(
         if body.file_type in ["ppt", "html"]:
             content = _parser_html_content(content)
         file_info = [await upload_file(content=content, file_name=body.file_name, request_id=body.request_id,
-                                 file_type="html" if body.file_type == "ppt" else body.file_type)]
+                                 file_type="html" if body.file_type == "ppt" else body.file_type, username=body.username)]
         return {"code": 200, "data": content, "fileInfo": file_info, "requestId": body.request_id}
 
 
@@ -257,6 +260,7 @@ async def post_deepsearch(
     body: DeepSearchRequest,
 ):
     """深度搜索端点"""
+    print(f"Python接收到DeepSearch请求，username: {body.username}, erp: {body.erp}, effective_username: {body.effective_username}, request_id: {body.request_id}")
     deepsearch = DeepSearch(engines=body.search_engines)
     async def _stream():
         async for chunk in deepsearch.run(

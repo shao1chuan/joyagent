@@ -189,6 +189,9 @@ public class GenieConfig {
     @Value("${autobots.autoagent.executor.max_observe:10000}")
     private String maxObserve;
 
+    @Value("${autobots.agent_base_url:http://127.0.0.1:8081}")
+    private String agentBaseUrl;
+
     @Value("${autobots.autoagent.code_interpreter_url:}")
     private String CodeInterpreterUrl;
 

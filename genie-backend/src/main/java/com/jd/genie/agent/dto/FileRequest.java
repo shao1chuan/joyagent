@@ -14,4 +14,5 @@ public class FileRequest {
     private String fileName;
     private String description;
     private String content;
+    private String username;
 }

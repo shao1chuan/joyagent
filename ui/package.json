@@ -4,8 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build --mode production",
+    "setup-env": "node scripts/setup-env.js",
+    "dev": "npm run setup-env && vite",
+    "build": "npm run setup-env && tsc -b && vite build --mode production",
     "lint": "eslint .",
     "fix": "eslint . --fix",
     "preview": "vite preview"
